@@ -39,10 +39,10 @@ v_dist = math.sqrt((initial_pose_0[0] - initial_pose_1[0])
 
 initial_point_rel_gate_0 = [h_dist/2,
                             -v_dist/2, 0.0]
-print(initial_point_rel_gate_0)
+
 initial_point_rel_gate_1 = [-h_dist/2,
                             v_dist/2, 0.0]
-print(initial_point_rel_gate_1)
+
 poses_rel_gate_0 = [[0.0, -desp_gates,
                      0.0], [0.0, desp_gates, 0.0]]
 poses_rel_gate_1 = [[0.0, desp_gates,
@@ -101,28 +101,33 @@ def point_to_list(point: PointStamped):
 
 
 def transform_waypoints_from_gates_to_earth():
+    global initial_point_rel_gate_0, initial_point_rel_gate_1
 
     registration = TransformRegistration()
     do_transform = registration.get(PointStamped)
-    p0 = list_to_point(initial_point_rel_gate_0)
-    p1 = list_to_point(initial_point_rel_gate_1)
 
-    print(t_gate_0)
-    print(t_gate_1)
-    path_gate_0.append(point_to_list(do_transform(p0, t_gate_0)))
-    path_gate_1.append(point_to_list(do_transform(p1, t_gate_1)))
+    initial_point_rel_gate_0 = point_to_list(do_transform(
+        list_to_point(initial_point_rel_gate_0), t_gate_0))
+    initial_point_rel_gate_1 = point_to_list(do_transform(
+        list_to_point(initial_point_rel_gate_1), t_gate_1))
+
+    path_gate_0.append(initial_point_rel_gate_0)
+    path_gate_1.append(initial_point_rel_gate_1)
 
     for point in poses_rel_gate_0:
         path_gate_0.append(point_to_list(
             do_transform(list_to_point(point), t_gate_0)))
 
-    path_gate_0.append(point_to_list(do_transform(p1, t_gate_1)))
+    path_gate_0.append(initial_point_rel_gate_1)
 
     for point in poses_rel_gate_1:
         path_gate_1.append(point_to_list(
             do_transform(list_to_point(point), t_gate_1)))
 
-    path_gate_1.append(point_to_list(do_transform(p0, t_gate_0)))
+    path_gate_1.append(initial_point_rel_gate_0)
+
+    print(f"Path 0: {path_gate_0}")
+    print(f"Path 1: {path_gate_1}")
 
 
 def shutdown_all(uavs):
@@ -157,12 +162,21 @@ def follow_path(drone_interface: DroneInterface):
             path = path_gate_1
         else:
             path = path_gate_0
-    print(path)
-    print("path to follow")
+
     drone_interface.follow_path.follow_path_with_keep_yaw(
         path=path, speed=speed)
     # drone_interface.goto.go_to_point_path_facing(
     #     pose_generator(drone_interface), speed=speed)
+
+
+def go_to(drone_interface: DroneInterface):
+    if (drone_interface.drone_id == drones_ns[0]):
+        point = initial_point_rel_gate_0
+    if (drone_interface.drone_id == drones_ns[1]):
+        point = initial_point_rel_gate_1
+    drone_interface.goto.go_to_point_path_facing(
+        point=point, speed=speed
+    )
 
 
 def confirm(uavs: List[DroneInterface], msg: str = 'Continue') -> bool:
@@ -187,8 +201,13 @@ def run_func(uavs: List[DroneInterface], func, *args):
     print("all done")
 
 
-def move_uavs(uavs):
+def follow_path_uavs(uavs):
     run_func(uavs, follow_path)
+    return
+
+
+def go_to_uavs(uavs):
+    run_func(uavs, go_to)
     return
 
 
@@ -210,12 +229,15 @@ if __name__ == '__main__':
     print("Initial transformations")
     gates_transforms()
     transform_waypoints_from_gates_to_earth()
+    print("Initial Go To")
+    confirm(uavs, "Go To")
+    go_to_uavs(uavs)
     print("Follow Path")
     confirm(uavs, "Follow Path")
-    move_uavs(uavs)
+    follow_path_uavs(uavs)
     drone_turn = 1
     while confirm(uavs, "Replay"):
-        move_uavs(uavs)
+        follow_path_uavs(uavs)
         drone_turn = abs(drone_turn) - 1
 
     print("Land")
