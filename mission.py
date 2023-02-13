@@ -3,7 +3,7 @@
 import os
 from time import sleep
 import rclpy
-from python_interface.drone_interface import DroneInterface
+from as2_python_api.drone_interface import DroneInterface
 from as2_msgs.msg import YawMode
 
 
@@ -69,7 +69,8 @@ def drone_run(drone_interface: DroneInterface):
 
     for goal in path:
         print(f"Go to with angle {-1.57}: {goal}")
-        drone_interface.goto.go_to_point_with_yaw(goal, speed=speed, angle=-1.57)
+        drone_interface.goto.go_to_point_with_yaw(
+            goal, speed=speed, angle=-1.57)
         print("Go to done")
     sleep(sleep_time)
 

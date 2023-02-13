@@ -1,82 +1,129 @@
 #!/bin/python3
 
-import rclpy
 import sys
+import time
 import threading
 from typing import List
-from python_interface.drone_interface import DroneInterface
+import math
+import rclpy
+from tf2_ros.buffer_interface import TransformRegistration
+from tf2_geometry_msgs import PointStamped, TransformStamped
+from as2_python_api.drone_interface import DroneInterface
 
 # pos= [[1,0,1],[-1,1,1.5],[-1,-1,2.0]]
 
-speed = 0.5
+speed = 1.0
 ingore_yaw = True
+height = 2.2
+desp_gates = 0.5
 
-h1 = 1.0
-h2 = 1.5
-h3 = 2.0
+drone_turn = 0
 
+# gate_1_pose = PoseStamped()
+# gate_2_pose = PoseStamped()
 
-v0 = [-2, -1, h1]
-v1 = [0, 2, h1]
-v2 = [2, -1, h1]
+t_gate_0 = TransformStamped()
+t_gate_1 = TransformStamped()
 
-v3 = [2, 1, h2]
-v4 = [-2, 1, h2]
-v5 = [0, -2, h2]
+position_gate_0 = [0.0, 1.0]
+position_gate_1 = [3.0, 1.0]
 
+initial_pose_0 = [1.5, 0.0]
+initial_pose_1 = [1.5, 2.0]
 
-v6 = v0
-v6[2] = h3
-v7 = v1
-v7[2] = h3
-v8 = v2
-v8[2] = h3
+h_dist = math.sqrt((position_gate_0[0] - position_gate_1[0])
+                   ** 2 + (position_gate_0[1] - position_gate_1[1])**2)
 
+v_dist = math.sqrt((initial_pose_0[0] - initial_pose_1[0])
+                   ** 2 + (initial_pose_0[1] - initial_pose_1[1])**2)
 
-l0 = [2, 0, 1.0]
-l1 = [-2, 0, 1.0]
-l2 = [0, 0, 1.0]
-
-
-# pos0= [[1,1,1],[1,-1,1.5],[-1,-1,1.0],[-1,0,1]]
-# pos1= [[-1,-1,1],[-1,1,1.5],[1,1,2.0],[1,0,1]]
-# pos2= [[-1,-1,1],[-1,1,1.5],[1,1,2.0],[1,0,1]]
-
-# pos0= [[1,1,1],[1,-1,1.5],[-1,-1,1.0],[-1,0,1]]
-
-pos0 = [v2, v1, v0, v2, v5, v4, v3, v5, v8, v7, v6, v8, v2, l0]
-pos1 = [v0, v2, v1, v0, v4, v3, v5, v4, v6, v8, v7, v6, v0, l1]
-pos2 = [v1, v0, v2, v1, v3, v5, v4, v3, v7, v6, v8, v7, v1, l2]
+initial_point_rel_gate_0 = [h_dist/2,
+                            -v_dist/2, 0.0]
+print(initial_point_rel_gate_0)
+initial_point_rel_gate_1 = [-h_dist/2,
+                            v_dist/2, 0.0]
+print(initial_point_rel_gate_1)
+poses_rel_gate_0 = [[0.0, -desp_gates,
+                     0.0], [0.0, desp_gates, 0.0]]
+poses_rel_gate_1 = [[0.0, desp_gates,
+                     0.0], [0.0, -desp_gates, 0.0]]
 
 drones_ns = [
     'drone_sim_0',
-    'drone_sim_1',
-    'drone_sim_2']
+    'drone_sim_1']
 # drones_ns=['cf0','cf1']
 # drones_ns=['cf1']
 
-n_point_0 = 0
-n_point_1 = 0
-n_point_2 = 0
+path_gate_0 = []
+path_gate_1 = []
 
-def reset_point():
-    global n_point_0, n_point_1, n_point_2
-    n_point_0 = 0
-    n_point_1 = 0
-    n_point_2 = 0
 
-def pose_generator(uav: DroneInterface):
-    global n_point_0, n_point_1, n_point_2
-    if uav.get_namespace()[-1] == '0':
-        ret = pos0[n_point_0]
-        n_point_0 += 1
-    elif uav.get_namespace()[-1] == '1':
-        ret = pos1[n_point_1]
-        n_point_1 += 1
-    elif uav.get_namespace()[-1] == '2':
-        ret = pos2[n_point_2]
-        n_point_2 += 1
+def gates_transforms():
+    global t_gate_0, t_gate_1
+
+    t_gate_0.header.frame_id = 'earth'
+    t_gate_0.child_frame_id = 'gate_0'
+    t_gate_0.transform.translation.x = position_gate_0[0]
+    t_gate_0.transform.translation.y = position_gate_0[1]
+    t_gate_0.transform.translation.z = 2.2
+    t_gate_0.transform.rotation.x = 0.0
+    t_gate_0.transform.rotation.y = 0.0
+    t_gate_0.transform.rotation.z = 0.0
+    t_gate_0.transform.rotation.w = 0.0
+
+    t_gate_1.header.frame_id = 'earth'
+    t_gate_1.child_frame_id = 'gate_1'
+    t_gate_1.transform.translation.x = position_gate_1[0]
+    t_gate_1.transform.translation.y = position_gate_1[1]
+    t_gate_1.transform.translation.z = 2.2
+    t_gate_1.transform.rotation.x = 0.0
+    t_gate_1.transform.rotation.y = 0.0
+    t_gate_1.transform.rotation.z = 0.0
+    t_gate_1.transform.rotation.w = 0.0
+
+
+def list_to_point(_l: list):
+    ret = PointStamped()
+    ret.point.x = _l[0]
+    ret.point.y = _l[1]
+    ret.point.z = _l[2]
+
     return ret
+
+
+def point_to_list(point: PointStamped):
+    ret = []
+    ret.append(point.point.x)
+    ret.append(point.point.y)
+    ret.append(point.point.z)
+
+    return ret
+
+
+def transform_waypoints_from_gates_to_earth():
+
+    registration = TransformRegistration()
+    do_transform = registration.get(PointStamped)
+    p0 = list_to_point(initial_point_rel_gate_0)
+    p1 = list_to_point(initial_point_rel_gate_1)
+
+    print(t_gate_0)
+    print(t_gate_1)
+    path_gate_0.append(point_to_list(do_transform(p0, t_gate_0)))
+    path_gate_1.append(point_to_list(do_transform(p1, t_gate_1)))
+
+    for point in poses_rel_gate_0:
+        path_gate_0.append(point_to_list(
+            do_transform(list_to_point(point), t_gate_0)))
+
+    path_gate_0.append(point_to_list(do_transform(p1, t_gate_1)))
+
+    for point in poses_rel_gate_1:
+        path_gate_1.append(point_to_list(
+            do_transform(list_to_point(point), t_gate_1)))
+
+    path_gate_1.append(point_to_list(do_transform(p0, t_gate_0)))
+
 
 def shutdown_all(uavs):
     print("Exiting...")
@@ -85,18 +132,38 @@ def shutdown_all(uavs):
     sys.exit(1)
 
 # create decorator for creating a thread for each drone
+
+
 def takeoff(uav: DroneInterface):
     uav.arm()
     uav.offboard()
-    uav.takeoff(1, 0.7)
-    # sleep(1)
+    uav.takeoff(2.0, 0.7)
+    time.sleep(1)
+
 
 def land(drone_interface: DroneInterface):
     drone_interface.land(0.4)
 
 
-def go_to(drone_interface: DroneInterface):
-    drone_interface.go_to_point(pose_generator(drone_interface), speed=speed, ignore_yaw=ingore_yaw)
+def follow_path(drone_interface: DroneInterface):
+    path = []
+    if drone_interface.drone_id == drones_ns[0]:
+        if drone_turn == 0:
+            path = path_gate_0
+        else:
+            path = path_gate_1
+    elif drone_interface.drone_id == drones_ns[1]:
+        if drone_turn == 0:
+            path = path_gate_1
+        else:
+            path = path_gate_0
+    print(path)
+    print("path to follow")
+    drone_interface.follow_path.follow_path_with_keep_yaw(
+        path=path, speed=speed)
+    # drone_interface.goto.go_to_point_path_facing(
+    #     pose_generator(drone_interface), speed=speed)
+
 
 def confirm(uavs: List[DroneInterface], msg: str = 'Continue') -> bool:
     confirmation = input(f"{msg}? (y/n): ")
@@ -106,6 +173,7 @@ def confirm(uavs: List[DroneInterface], msg: str = 'Continue') -> bool:
         return False
     else:
         shutdown_all(uavs)
+
 
 def run_func(uavs: List[DroneInterface], func, *args):
     threads = []
@@ -118,28 +186,37 @@ def run_func(uavs: List[DroneInterface], func, *args):
         t.join()
     print("all done")
 
+
 def move_uavs(uavs):
-    reset_point()
-    for i in range(len(pos0)):
-        run_func(uavs, go_to)
+    run_func(uavs, follow_path)
     return
+
+
+def print_status(drone_interface: DroneInterface):
+    while (True):
+        drone_interface.get_logger().info(str(drone_interface.goto.status))
+
 
 if __name__ == '__main__':
 
     rclpy.init()
     uavs = []
-    for i in range(len(drones_ns)):
-        uavs.append(DroneInterface(drones_ns[i], verbose=True))
+    for ns in drones_ns:
+        uavs.append(DroneInterface(ns, verbose=False))
 
     print("Takeoff")
     confirm(uavs, "Takeoff")
     run_func(uavs, takeoff)
-
-    print("Go to")
-    confirm(uavs, "Go to")
+    print("Initial transformations")
+    gates_transforms()
+    transform_waypoints_from_gates_to_earth()
+    print("Follow Path")
+    confirm(uavs, "Follow Path")
     move_uavs(uavs)
+    drone_turn = 1
     while confirm(uavs, "Replay"):
         move_uavs(uavs)
+        drone_turn = abs(drone_turn) - 1
 
     print("Land")
     confirm(uavs, "Land")

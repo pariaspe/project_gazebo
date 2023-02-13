@@ -1,11 +1,17 @@
 {
-    "world": "empty",
-    "drones": [
+    "world": "gates",
+    "drones": [  
         {
             "model": "quadrotor_base",
             "name": "drone_sim_0",
-            "xyz": [ 1.0, 1.0, 0.3 ],
+            "xyz": [ 1.5, 0.0, 0.2 ],
             "rpy": [ 0, 0, 0.0 ]
+        },
+        {
+            "model": "quadrotor_base",
+            "name": "drone_sim_1",
+            "xyz": [ 1.5, 2.0, 0.2 ],
+            "rpy": [ 0, 0, 3.14 ]
         }
     ]
 }
