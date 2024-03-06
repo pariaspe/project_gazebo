@@ -1,0 +1,34 @@
+{
+    "world_name": "empty",
+    "drones": [
+        {
+            "model_type": "quadrotor_base",
+            "model_name": "drone0",
+            "xyz": [
+                1.0,
+                1.0,
+                0.3
+            ],
+            "rpy": [
+                0,
+                0,
+                0.0
+            ],
+            "payload": [
+            {
+              "model_type": "gps",
+              "model_name": "gps0"
+            },
+            {
+              "model_name": "gb",
+              "model_type": "gimbal_position",
+              "payload": {
+                  "model_name": "point_lidar",
+                  "model_type": "point_lidar"
+              }
+            }
+            ],
+            "flight_time": 60
+        }
+    ]
+}
