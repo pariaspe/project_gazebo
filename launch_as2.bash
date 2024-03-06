@@ -45,9 +45,9 @@ behavior_tree=${behavior_tree:="false"}
 record_rosbag=${record_rosbag:="false"}
 launch_keyboard_teleop=${launch_keyboard_teleop:="false"}
 
-# list json files
+# CHOOSE SIMULATION CONFIG FILE
 echo "Choose simulation config file to open:"
-cat -n <(ls -1 sim_config/*.json)
+cat -n <(ls -1 sim_config/*.json) # list json files
 simulation_config=$(python utils/choose_sim_config.py | tail -n 1)
 if [[ ${simulation_config} == "Invalid" ]]; then
     exit 1
