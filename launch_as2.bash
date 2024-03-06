@@ -6,11 +6,10 @@ usage() {
     echo "      -m: multi agent"
     echo "      -r: record rosbag"
     echo "      -t: launch keyboard teleoperation"
-    echo "      -n: drone namespace, default is drone0"
 }
 
 # Arg parser
-while getopts "bmrtn" opt; do
+while getopts "bmrt" opt; do
   case ${opt} in
     b )
       behavior_tree="true"
@@ -23,9 +22,6 @@ while getopts "bmrtn" opt; do
       ;;
     t )
       launch_keyboard_teleop="true"
-      ;;
-    n )
-      drone_namespace="${OPTARG}"
       ;;
     \? )
       echo "Invalid option: -$OPTARG" >&2
@@ -55,41 +51,43 @@ behavior_tree=${behavior_tree:="false"}
 swarm=${swarm:="false"}
 record_rosbag=${record_rosbag:="false"}
 launch_keyboard_teleop=${launch_keyboard_teleop:="false"}
-drone_namespace=${drone_namespace:="drone"}
 
 if [[ ${swarm} == "true" ]]; then
   simulation_config="sim_config/world_swarm.json"
-  num_drones=3
 else
   simulation_config="sim_config/world.json" 
-  num_drones=1
 fi
 
+# Get drone namespaces from swarm config file
+drones=$(python utils/get_drones.py ${simulation_config})
 
-# Generate the list of drone namespaces
-drone_ns=()
-for ((i=0; i<${num_drones}; i++)); do
-  drone_ns+=("$drone_namespace$i")
-done
-
-for ns in "${drone_ns[@]}"
+drones_arr=(${drones//:/ })
+for drone in "${drones_arr[@]}"
 do
-  tmuxinator start -n ${ns} -p tmuxinator/session.yml drone_namespace=${ns} simulation_config=${simulation_config} behavior_tree=${behavior_tree} &
-  wait
+    tmuxinator start -p tmuxinator/session.yml \
+        drone_namespace=${drone} \
+        simulation_config=${simulation_config} \
+        behavior_tree=${behavior_tree} &
+    wait
 done
 
 if [[ ${record_rosbag} == "true" ]]; then
-  tmuxinator start -n rosbag -p tmuxinator/rosbag.yml drone_namespace=$(list_to_string "${drone_ns[@]}") &
-  wait
+    tmuxinator start -p tmuxinator/rosbag.yml \
+        drone_namespace=${drones} &
+    wait
 fi
 
 if [[ ${launch_keyboard_teleop} == "true" ]]; then
-  tmuxinator start -n keyboard_teleop -p tmuxinator/keyboard_teleop.yml simulation=true drone_namespace=$(list_to_string "${drone_ns[@]}") &
-  wait
+    # TODO: Keyboard Teleop uses ',' as separator for drone namespaces
+    drones_sep=$(python utils/get_drones.py ${config_file} --sep ",")
+    tmuxinator start -n keyboard_teleop -p tmuxinator/keyboard_teleop.yml \
+        simulation=true \
+        drone_namespace=${drones_sep} &
+    wait
 fi
 
-tmuxinator start -n gazebo -p tmuxinator/gazebo.yml simulation_config=${simulation_config} &
+tmuxinator start -p tmuxinator/gazebo.yml simulation_config=${simulation_config} &
 wait
 
-# Attach to tmux session ${drone_ns[@]}, window mission
-tmux attach-session -t ${drone_ns[0]}:mission
+# Attach to tmux session ${drone_arr[@]}, window mission
+tmux attach-session -t ${drones_arr[0]}:mission

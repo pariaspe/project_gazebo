@@ -10,8 +10,11 @@ use_behavior_tree   = @settings["behavior_tree"] == "true"
 behavior_type       = "position"
 
 %>
+
+name: <%= drone_namespace %>
 attach: false
 root: ./
+pre_window: humble; clear
 startup_window: alphanumeric_viewer
 windows:
   - alphanumeric_viewer:

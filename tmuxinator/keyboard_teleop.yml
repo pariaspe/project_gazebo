@@ -4,8 +4,10 @@ simulation = @settings["simulation"]
 drone_namespace = @settings["drone_namespace"]
 %>
 
+name: keyb_teleop
 attach: true
 root: ./
+pre_window: humble; clear
 startup_window: keyboard_teleop
 windows:
   - keyboard_teleop:
