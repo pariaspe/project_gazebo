@@ -38,8 +38,6 @@ while getopts "bmrt" opt; do
   esac
 done
 
-source utils/tools.bash
-
 # Shift optional args
 shift $((OPTIND -1))
 
