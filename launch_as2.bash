@@ -68,7 +68,7 @@ done
 
 if [[ ${record_rosbag} == "true" ]]; then
     tmuxinator start -p tmuxinator/rosbag.yml \
-        drone_namespace=${drones} &
+        drones=${drones} &
     wait
 fi
 
