@@ -3,7 +3,6 @@
 usage() {
     echo "  options:"
     echo "      -b: launch behavior tree"
-    echo "      -m: multi agent"
     echo "      -r: record rosbag"
     echo "      -t: launch keyboard teleoperation"
 }
@@ -13,9 +12,6 @@ while getopts "bmrt" opt; do
   case ${opt} in
     b )
       behavior_tree="true"
-      ;;
-    m )
-      swarm="true"
       ;;
     r )
       record_rosbag="true"
@@ -46,14 +42,15 @@ export IGN_GAZEBO_RESOURCE_PATH=$PWD/worlds:$IGN_GAZEBO_RESOURCE_PATH
 
 ## DEFAULTS
 behavior_tree=${behavior_tree:="false"}
-swarm=${swarm:="false"}
 record_rosbag=${record_rosbag:="false"}
 launch_keyboard_teleop=${launch_keyboard_teleop:="false"}
 
-if [[ ${swarm} == "true" ]]; then
-  simulation_config="sim_config/world_swarm.json"
-else
-  simulation_config="sim_config/world.json" 
+# list json files
+echo "Choose simulation config file to open:"
+cat -n <(ls -1 sim_config/*.json)
+simulation_config=$(python utils/choose_sim_config.py | tail -n 1)
+if [[ ${simulation_config} == "Invalid" ]]; then
+    exit 1
 fi
 
 # Get drone namespaces from swarm config file
