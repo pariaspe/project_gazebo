@@ -63,12 +63,13 @@ windows:
             use_sim_time:=true
         <%- end %>
   - mission:
-      layout:
-      panes:
-        <%- if use_behavior_tree %>
-        - ros2 launch as2_behavior_tree behavior_trees.launch.py
-            drone_id:=<%= drone_namespace %>
-            use_sim_time:=true
-            tree:=./trees/square.xml
-        <%- end %>
-        - echo Run here the mission
+        root: ./mission/
+        layout:
+        panes:
+            <%- if use_behavior_tree %>
+            - ros2 launch as2_behavior_tree behavior_trees.launch.py
+                drone_id:=<%= drone_namespace %>
+                use_sim_time:=true
+                tree:=./trees/square.xml
+            <%- end %>
+            - echo Run here the mission
