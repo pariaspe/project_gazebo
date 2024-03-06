@@ -47,6 +47,9 @@ source utils/tools.bash
 # Shift optional args
 shift $((OPTIND -1))
 
+# HOW TO INCLUDE WORLDS OR MODELS FROM THE PROJECT
+export IGN_GAZEBO_RESOURCE_PATH=$PWD/worlds:$IGN_GAZEBO_RESOURCE_PATH
+
 ## DEFAULTS
 behavior_tree=${behavior_tree:="false"}
 swarm=${swarm:="false"}
