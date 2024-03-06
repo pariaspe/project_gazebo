@@ -8,7 +8,7 @@ usage() {
 }
 
 # Arg parser
-while getopts "bmrt" opt; do
+while getopts "brt" opt; do
   case ${opt} in
     b )
       behavior_tree="true"
