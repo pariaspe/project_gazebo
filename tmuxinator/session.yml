@@ -65,12 +65,7 @@ windows:
         - ros2 launch as2_behaviors_perception point_gimbal_behavior.launch.py
             namespace:=<%= drone_namespace %>
             use_sim_time:=true
-            gimbal_name:=gb
-            gimbal_frame_id:=gb
-            gimbal_base_frame_id:=gb/_0/_1/_2
-            gimbal_orientation_threshold:=0.1
-            tf_timeout_threshold:=0.5
-            control_mode:=position
+            config_file:=sim_config/point_gimbal_behavior.yaml
   - mission:
         root: ./mission/
         layout:

@@ -43,7 +43,7 @@ if __name__ == '__main__':
     rclpy.init()
 
     uav = DroneWithGimbal("drone0", verbose=False, use_sim_time=True)
-    uav.run_test_1()
+    uav.run_test_2()
     uav.shutdown()
     rclpy.shutdown()
 
