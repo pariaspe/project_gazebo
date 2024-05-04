@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     sim_folder = Path(args.config_folder)
 
-    files = list(sim_folder.glob("*.json"))
+    files = sorted(sim_folder.glob("*.json"))
     print("Choose simulation config file to open:")
     i = 1
     for file in files:
@@ -28,7 +28,7 @@ if __name__ == "__main__":
         s = input('')
         opt = int(s)
         chosen = files[opt-1]
-    except (EOFError, ValueError, IndexError) as e:
+    except (EOFError, ValueError, IndexError):
         print("Invalid")
         sys.exit(1)
 
