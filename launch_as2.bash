@@ -74,7 +74,7 @@ fi
 
 if [[ ${launch_keyboard_teleop} == "true" ]]; then
     # TODO: Keyboard Teleop uses ',' as separator for drone namespaces
-    drones_sep=$(python utils/get_drones.py ${config_file} --sep ",")
+    drones_sep=$(python utils/get_drones.py ${simulation_config} --sep ",")
     tmuxinator start -n keyboard_teleop -p tmuxinator/keyboard_teleop.yml \
         simulation=true \
         drone_namespace=${drones_sep} &
