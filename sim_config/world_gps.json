@@ -1,5 +1,6 @@
 {
     "world_name": "empty",
+    "origin": {"latitude": 40.158535, "longitude": -3.811071, "altitude": 800.0},
     "drones": [
         {
             "model_type": "quadrotor_base",
@@ -8,8 +9,8 @@
             "rpy": [ 0, 0, 0.0 ],
             "payload": [
                 {
-                    "model_name": "front_camera",
-                    "model_type": "hd_camera"
+                    "model_type": "gps",
+                    "model_name": "gps0"
                 }
             ]
         }
