@@ -59,7 +59,7 @@ drones=$(python utils/get_drones.py ${simulation_config})
 drones_arr=(${drones//:/ })
 for drone in "${drones_arr[@]}"
 do
-    tmuxinator start -p tmuxinator/session.yml \
+    tmuxinator start -p tmuxinator/aerostack2.yml \
         drone_namespace=${drone} \
         simulation_config=${simulation_config} \
         behavior_tree=${behavior_tree} &
