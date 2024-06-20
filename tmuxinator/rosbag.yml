@@ -29,4 +29,8 @@ windows:
             /<%= drone %>/self_localization/twist
             /<%= drone %>/actuator_command/twist
             /<%= drone %>/motion_reference/pose
+            /gz/<%= drone %>/cmd_vel
+            /<%= drone %>/motion_reference/twist
+            /<%= drone %>/ground_truth/twist
+            /<%= drone %>/ground_truth/pose
         <%- end %>
