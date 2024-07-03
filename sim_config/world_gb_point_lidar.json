@@ -23,7 +23,7 @@
               "model_name": "gb",
               "model_type": "gimbal_position",
               "payload": {
-                  "model_name": "point_lidar",
+                  "model_name": "gb_lidar",
                   "model_type": "point_lidar"
               }
             }

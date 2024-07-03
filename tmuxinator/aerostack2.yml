@@ -27,36 +27,27 @@ windows:
       panes:
         - ros2 launch as2_platform_gazebo platform_gazebo_launch.py
             namespace:=<%= drone_namespace %>
-            use_sim_time:=true
+            platform_config_file:=sim_config/config.yaml
             simulation_config_file:=<%= simulation_config %>
-            platform_config_file:=sim_config/platform_config_file.yaml
   - state_estimator:
       layout:
       panes:
         - ros2 launch as2_state_estimator state_estimator_launch.py
             namespace:=<%= drone_namespace %>
-            use_sim_time:=true
-            plugin_name:=ground_truth
-            plugin_config_file:=sim_config/state_estimator_config_file.yaml
+            config_file:=sim_config/config.yaml
   - controller:
       layout:
       panes:
         - ros2 launch as2_motion_controller controller_launch.py
             namespace:=<%= drone_namespace %>
-            use_sim_time:=true
-            motion_controller_config_file:=sim_config/motion_controller.yaml
-            plugin_name:=pid_speed_controller
+            config_file:=sim_config/config.yaml
             plugin_config_file:=sim_config/motion_controller_plugin.yaml   
   - behaviors:
       layout:
       panes:
         - ros2 launch as2_behaviors_motion motion_behaviors_launch.py
             namespace:=<%= drone_namespace %>
-            use_sim_time:=true
-            follow_path_plugin_name:=follow_path_plugin_<%= behavior_type %>
-            go_to_plugin_name:=go_to_plugin_<%= behavior_type %>
-            takeoff_plugin_name:=takeoff_plugin_<%= behavior_type %>
-            land_plugin_name:=land_plugin_speed
+            config_file:=sim_config/config.yaml
         <%- if behavior_type == "trajectory" %>
         - ros2 launch as2_behaviors_trajectory_generation generate_polynomial_trajectory_behavior_launch.py
             namespace:=<%= drone_namespace %>
@@ -64,8 +55,7 @@ windows:
         <%- end %>
         - ros2 launch as2_behaviors_perception point_gimbal_behavior.launch.py
             namespace:=<%= drone_namespace %>
-            use_sim_time:=true
-            config_file:=sim_config/point_gimbal_behavior.yaml
+            config_file:=sim_config/config.yaml
   - mission:
         root: ./mission/
         layout:
