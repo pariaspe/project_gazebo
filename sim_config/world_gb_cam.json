@@ -20,15 +20,11 @@
                     "model_name": "gb",
                     "model_type": "gimbal_position",
                     "payload": {
-                        "model_name": "hd_camera",
+                        "model_name": "cam1",
                         "model_type": "hd_camera"
                     }
                 }
             ]
-        },
-        {
-            "model_type": "hexrotor_base",
-            "model_name": "drone1"
         }
     ]
 }
