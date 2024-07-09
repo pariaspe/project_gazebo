@@ -29,10 +29,10 @@ def drone_run(drone_interface: DroneInterface):
     print("Start mission")
 
     ##### ARM OFFBOARD #####
-    print("Arm")
+    print("Offboard")
     drone_interface.offboard()
     sleep(sleep_time)
-    print("Offboard")
+    print("Arm")
     drone_interface.arm()
     sleep(sleep_time)
 
