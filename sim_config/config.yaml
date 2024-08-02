@@ -13,7 +13,7 @@
       use_gazebo_tf: True
   controller_manager:
     ros__parameters:
-      plugin_name: pid_speed_controller  # NOT WORKING
+      plugin_name: pid_speed_controller
       cmd_freq: 30.0  # Hz of platform commands send
       info_freq: 10.0  # Hz of platform info publish
       odom_frame_id: "odom"
