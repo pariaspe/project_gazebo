@@ -41,6 +41,9 @@ shift $((OPTIND -1))
 export IGN_GAZEBO_RESOURCE_PATH=$PWD/worlds:$IGN_GAZEBO_RESOURCE_PATH
 export GZ_SIM_RESOURCE_PATH=$PWD/worlds:$GZ_SIM_RESOURCE_PATH
 
+# HOW TO INCLUDE MODULES FROM THE PROJECT
+export AS2_MODULES_PATH=$AS2_MODULES_PATH:$(pwd)/as2_python_api_modules
+
 ## DEFAULTS
 behavior_tree=${behavior_tree:="false"}
 record_rosbag=${record_rosbag:="false"}
