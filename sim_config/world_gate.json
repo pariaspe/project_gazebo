@@ -1,0 +1,28 @@
+{
+    "world_name": "empty",
+    "drones": [
+        {
+            "model_type": "quadrotor_base",
+            "model_name": "drone0",
+            "xyz": [ 1.0, 1.0, 0.3 ],
+            "rpy": [ 0, 0, 0.0 ],
+            "flight_time": 60
+        }
+    ],
+    "objects": [
+        {
+            "model_type": "gate",
+            "model_name": "gate0",
+            "xyz": [ 5.0, 1.0, 0.0 ],
+            "rpy": [ 0, 0, 0.0 ],
+            "tf_broadcaster": true
+        },
+        {
+            "model_type": "gate",
+            "model_name": "gate1",
+            "xyz": [ 5.0, 5.0, 0.0 ],
+            "rpy": [ 0, 0, 0.0 ],
+            "tf_broadcaster": true
+        }
+    ]
+}
