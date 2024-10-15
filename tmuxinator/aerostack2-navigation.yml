@@ -53,9 +53,6 @@ windows:
             namespace:=<%= drone_namespace %>
             use_sim_time:=true
         <%- end %>
-        - ros2 launch as2_behaviors_perception point_gimbal_behavior.launch.py
-            namespace:=<%= drone_namespace %>
-            config_file:=sim_config/config.yaml
   - navigation:
       panes:
         - ros2 launch as2_map_server depth2occ_grid-map_server.launch.py
@@ -70,5 +67,4 @@ windows:
         panes:
             # - python mission_path_planner_test.py
             - python mission_click_to_navigate.py
-            # - rviz2 -d ../rviz/navigation_config.rviz
-            - ros2 launch as2_visualization as2_visualization.launch.py namespace:=drone0 rviz_config:=rviz/navigation_config.rviz
+            - ros2 launch as2_visualization as2_visualization.launch.py namespace:=drone0 rviz_config:=../rviz/navigation_config.rviz
