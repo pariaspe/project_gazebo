@@ -53,21 +53,29 @@ windows:
             namespace:=<%= drone_namespace %>
             use_sim_time:=true
         <%- end %>
-  - navigation:
-      panes:
-        - ros2 launch as2_map_server scan2occ_grid-map_server.launch.py
+        - ros2 launch as2_behaviors_perception point_gimbal_behavior.launch.py
             namespace:=<%= drone_namespace %>
-            use_sim_time:=true
-        - ros2 launch as2_behaviors_path_planning path_planner_behavior.launch.py
-            namespace:=<%= drone_namespace %>
-            use_sim_time:=true
-            plugin_name:=voronoi
+            config_file:=sim_config/config.yaml
   - mission:
         root: ./mission/
         layout:
         panes:
-            # - python mission_path_planner_test.py
-            - python mission_click_to_navigate.py
+            <%- if use_behavior_tree %>
+            - ros2 launch as2_behavior_tree behavior_trees.launch.py
+                drone_id:=<%= drone_namespace %>
+                use_sim_time:=true
+                tree:=./trees/square.xml
+            <%- end %>
+            - echo Run here the mission
             - ros2 launch as2_visualization as2_visualization.launch.py
-                namespace:=drone0 
-                rviz_config:=../rviz/navigation_config.rviz
+                namespace:=<%= drone_namespace %>
+                rviz_config:=../rviz/config.rviz
+
+#   - knowledge_grap:
+#         root: /home/parias/as2_ws/src/as2_knowledge_graph_integration
+#         panes:
+#             - sleep 2 && ros2 launch as2_knowledge_graph as2_knowledge_graph_launch.py
+#                 use_sim_time:=true
+#                 namespace:='/'
+            # - sleep 3 && python as2_knowledge_graph_integration/insert_knowledge.py
+            # - rqt
