@@ -67,3 +67,6 @@ windows:
                 tree:=./trees/square.xml
             <%- end %>
             - echo Run here the mission
+            - ros2 launch as2_visualization as2_visualization.launch.py
+                namespace:=<%= drone_namespace %>
+                rviz_config:=../rviz/config.rviz
