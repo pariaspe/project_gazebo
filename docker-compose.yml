@@ -1,0 +1,20 @@
+services:
+  aerostack2:
+    image: aerostack2_lab
+    build:
+      context: ./docker/
+      args:
+        AS2_BRANCH: main
+      dockerfile: Dockerfile
+    container_name: aerostack2_lab
+    environment:
+      DISPLAY: $DISPLAY
+      ROS_LOCALHOST_ONLY: 1
+    privileged: true
+    volumes:
+      # X11
+      - ~/.Xauthority:/root/.Xauthority
+      # 
+      - .:/root/lab_gz/
+    network_mode: "host"
+    command: tail -f /dev/null
