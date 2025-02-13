@@ -29,7 +29,10 @@ class Drone(DroneInterface):
     def clicked_point_callback(self, msg: PointStamped):
         self.get_logger().info(f"Clicked point: {msg.point.x}, {msg.point.y}, {msg.point.z}")
         try:
-            self.navigate_to(msg.point.x, msg.point.y, 1.0, speed=2.0, wait=False)
+            z = msg.point.z
+            if msg.point.z == 0.0:
+                z = 1.0
+            self.navigate_to(msg.point.x, msg.point.y, z, speed=2.0, wait=False)
         except BehaviorHandler.GoalRejected:
             self.get_logger().info("Goal rejected")
         else:
