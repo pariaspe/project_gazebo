@@ -1,0 +1,25 @@
+# ~/.tmuxinator/aerostack2-academy.yml
+
+name: drone0
+attach: true
+root: ./
+pre_window: humble; clear
+startup_window: mission
+windows:
+    - aerostack2:
+        layout:
+        panes:
+            - ros2 launch launch/gz.launch.py 
+                world:=world_exercise.sdf
+                namespace:=drone0
+                config_file:=sim_config/bridges.yaml
+            - ros2 launch launch/as2.launch.py
+                namespace:=drone0
+                config_file:=sim_config/config.yaml
+    - mission:
+        root: ./mission/
+        layout: even-vertical
+        panes:
+            - python mission_academy.py -h
+            - ros2 service call /drone0/platform/state_machine/_reset std_srvs/srv/Trigger "{}" -h
+            - gz service -s /world/empty/control --reqtype gz.msgs.WorldControl --reptype gz.msgs.Boolean --timeout 3000 --req "reset {all true}"

@@ -20,6 +20,30 @@
       base_frame_id: "base_link"
       use_bypass: true
       tf_timeout_threshold: 0.05  # seconds
+      proportional_limitation: true
+      position_control:
+        reset_integral: false
+        antiwindup_cte: 0.5
+        alpha: 0.2
+        kp:
+          x: 1.0
+          y: 1.0
+          z: 1.0
+        kd:
+          x: 0.0
+          y: 0.0
+          z: 0.0
+        ki:
+          x: 0.0
+          y: 0.0
+          z: 0.0
+      yaw_control:
+        reset_integral: false
+        antiwindup_cte : 1.0
+        alpha: 0.3
+        kp: 1.0
+        kd: 0.001
+        ki: 0.0
   TakeoffBehavior:
     ros__parameters:
       takeoff_plugin_name: takeoff_plugin_position
@@ -39,3 +63,6 @@
       gimbal_base_frame_id: gb
       gimbal_threshold: 0.1
       tf_timeout_threshold: 0.5
+  RotateBehavior:
+    ros__parameters:
+      rotation_speed: 0.1
