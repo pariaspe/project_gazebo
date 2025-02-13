@@ -9,7 +9,7 @@
             "payload": [
                 {
                     "model_name": "front_camera",
-                    "model_type": "hd_camera"
+                    "model_type": "hd_camera_bis"
                 }
             ]
         }

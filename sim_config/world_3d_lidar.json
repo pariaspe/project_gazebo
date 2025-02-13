@@ -1,0 +1,18 @@
+{
+    "world_name": "tugbot_depot",
+    "drones": [
+        {
+            "model_type": "quadrotor_base",
+            "model_name": "drone0",
+            "xyz": [ 2.7, 1.0, 0.2 ],
+            "rpy": [ 0, 0, 0.0 ],
+            "payload": [
+                {
+                    "model_type": "lidar_3d",
+                    "model_name": "lidar",
+                    "xyz": [0, 0, 0.2]
+                  }
+            ]
+        }
+    ]
+}

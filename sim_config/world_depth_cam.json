@@ -1,15 +1,16 @@
 {
-    "world_name": "empty",
+    "world_name": "world_with_boxes",
     "drones": [
         {
             "model_type": "quadrotor_base",
             "model_name": "drone0",
-            "xyz": [ 1.0, 1.0, 0.3 ],
+            "xyz": [ 0.0, 0.0, 0.3 ],
             "rpy": [ 0, 0, 0.0 ],
             "payload": [
                 {
                     "model_name": "front_camera",
-                    "model_type": "rgbd_camera"
+                    "model_type": "rgbd_camera",
+                    "xyz": [ 0.05, 0.0, 0.05 ]
                 }
             ]
         }
