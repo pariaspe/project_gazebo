@@ -5,6 +5,7 @@ mission_planner.py
 """
 
 import rclpy
+import time
 
 from as2_python_api.mission_interpreter.mission import Mission
 from as2_python_api.mission_interpreter.mission_interpreter import MissionInterpreter
@@ -89,12 +90,16 @@ def main():
     print(mission)
 
     rclpy.init()
-    interpreter = MissionInterpreter(mission=mission)
+    interpreter = MissionInterpreter(use_sim_time=True)
     print("Start mission!")
 
+    interpreter.load_mission(0, mission)
     interpreter.drone.arm()
     interpreter.drone.offboard()
-    interpreter.perform_mission()
+    interpreter.start_mission(0)
+    while interpreter.status.pending_items or interpreter.status.current_item is not None:
+        print(interpreter.status)
+        time.sleep(0.5)
 
     print("Mission completed!")
     interpreter.shutdown()
