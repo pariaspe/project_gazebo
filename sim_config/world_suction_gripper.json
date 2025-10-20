@@ -1,0 +1,27 @@
+{
+    "world_name": "world_with_boxes",
+    "drones": [
+        {
+            "model_type": "quadrotor_base",
+            "model_name": "drone0",
+            "xyz": [ 1.0, 1.0, 1.5 ],
+            "rpy": [ 0, 0, 0.0 ],
+            "payload": [
+                {
+                    "model_name": "suction_gripper",
+                    "model_type": "suction_gripper",
+                    "xyz": [0.0, 0.0, 0.0],
+                    "rpy": [0.0, 1.57, 0.0]
+                }
+            ]
+        }
+    ],
+    "objects": [
+        {
+            "model_type": "small_blue_box",
+            "model_name": "blue_box",
+            "xyz": [ 1.0, 1.1, 0.1 ],
+            "rpy": [ 1.57, 0, 0.0 ]
+        }
+    ]
+}

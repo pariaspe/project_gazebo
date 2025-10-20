@@ -23,6 +23,10 @@
             name="ignition::gazebo::systems::Sensors">
             <render_engine>ogre2</render_engine>
         </plugin>
+        <plugin
+            filename="ignition-gazebo-contact-system"
+            name="ignition::gazebo::systems::Contact">
+        </plugin>
 
         <include>
             <uri>model://ground_plane</uri>
